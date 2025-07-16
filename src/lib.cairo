@@ -3,6 +3,7 @@
 
 #[starknet::contract]
 mod PumpBTC {
+    use core::num::traits::Zero;
     use openzeppelin::access::ownable::OwnableComponent;
     use openzeppelin::token::erc20::ERC20Component;
     use openzeppelin::token::erc20::ERC20HooksEmptyImpl;

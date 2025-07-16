@@ -1,12 +1,13 @@
 [package]
 name = "starknet_token"
 version = "0.1.0"
+edition = "2024_07"
 
 # See more keys and their definitions at https://docs.swmansion.com/scarb/docs/reference/manifest.html
 
 [dependencies]
 starknet = ">=2.5.4"
-openzeppelin = { git = "https://github.com/openzeppelin/cairo-contracts" }
+openzeppelin = "1.0.0"
 
 [[target.starknet-contract]]
 casm = true
