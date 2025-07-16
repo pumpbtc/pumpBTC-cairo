@@ -30,6 +30,24 @@ mod PumpBTC {
         is_minter: Map<ContractAddress, bool>,
     }
 
+    #[derive(Drop, Debug, PartialEq, starknet::Event)]
+    pub struct MinterSet {
+        pub minter: ContractAddress,
+        pub status: bool,
+    }
+
+    #[derive(Drop, Debug, PartialEq, starknet::Event)]
+    pub struct Mint {
+        pub to: ContractAddress,
+        pub amount: u256,
+    }
+
+    #[derive(Drop, Debug, PartialEq, starknet::Event)]
+    pub struct Burn {
+        pub from: ContractAddress,
+        pub amount: u256,
+    }
+
     #[event]
     #[derive(Drop, starknet::Event)]
     enum Event {
@@ -37,6 +55,9 @@ mod PumpBTC {
         ERC20Event: ERC20Component::Event,
         #[flat]
         OwnableEvent: OwnableComponent::Event,
+        MinterSet: MinterSet,
+        Mint: Mint,
+        Burn: Burn,
     }
 
     #[constructor]
@@ -67,6 +88,7 @@ mod PumpBTC {
         fn set_minter(ref self: ContractState, minter: ContractAddress, status: bool) {
             self.ownable.assert_only_owner();
             self.is_minter.write(minter, status);
+            self.emit(MinterSet { minter, status });
         }
 
         #[external(v0)]
@@ -74,6 +96,7 @@ mod PumpBTC {
             self.assert_not_zero_amount(amount);
             self.assert_only_minter();
             self.erc20.mint(to, amount);
+            self.emit(Mint { to, amount });
         }
 
         #[external(v0)]
@@ -81,6 +104,7 @@ mod PumpBTC {
             self.assert_not_zero_amount(amount);
             self.assert_only_minter();
             self.erc20.burn(from, amount);
+            self.emit(Burn { from, amount });
         }
     }
 }
